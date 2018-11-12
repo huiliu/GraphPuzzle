@@ -158,7 +158,9 @@ namespace GraphGame
             }
             while (false);
 
-            this.solvers.Add(new List<int>(this.TraverseRecord.CurrentNodes));
+            if (isEndNode)
+                this.solvers.Add(new List<int>(this.TraverseRecord.CurrentNodes));
+
             this.TraverseRecord.Pop();
 
             return isEndNode;
