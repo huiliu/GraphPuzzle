@@ -85,11 +85,15 @@ namespace GraphGame
                         score += this.CalcScoreStrategy(node.AllSuccessor.Count);
                     }
                 }
+
+                if (s[0] == s[s.Count - 1])
+                    score += this.LoopBufferScore;
             }
 
             return score;
         }
 
+        private int LoopBufferScore { get { return 2; } }
         /// 节点得分计算策略
         private int CalcScoreStrategy(int count)
         {
