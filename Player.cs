@@ -124,5 +124,14 @@ namespace GraphGame
             c = idx % this.BoardWidth;
             r = (idx - c) / this.BoardWidth;
         }
+
+        public override string ToString()
+        {
+            var s = string.Format("Player[{0}]'s GameBoard: \n", this.UID);
+            foreach (var kvp in this.graphs)
+            s += string.Format("Color [{0}]:\n{1}", kvp.Key, kvp.Value);
+
+            return s+'\n';
+        }
     }
 }

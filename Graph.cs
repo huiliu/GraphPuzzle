@@ -27,6 +27,17 @@ namespace GraphGame
         {
             get { return this.Successors; }
         }
+
+        public override string ToString()
+        {
+            var s = string.Format("Node[{0}] Successors: ", this.ID);
+            foreach(var i in this.Successors)
+            {
+                s += i.ToString() + ", ";
+            }
+
+            return s.TrimEnd(' ', ',');
+        }
     }
 
     public class TraverseRecord
@@ -135,12 +146,6 @@ namespace GraphGame
 
             do
             {
-                if (node.AllSuccessor.Count == 1)
-                {
-                    Console.WriteLine(this.TraverseRecord.ToString());
-                    break;
-                }
-
                 foreach (var id in node.AllSuccessor)
                 {
                     if (last == id)
@@ -164,6 +169,15 @@ namespace GraphGame
             this.TraverseRecord.Pop();
 
             return isEndNode;
+        }
+
+        public override string ToString()
+        {
+            var s = "Graph: \n";
+            foreach (var node in this.Nodes)
+                s+=node.ToString()+'\n';
+
+            return s;
         }
     }
 

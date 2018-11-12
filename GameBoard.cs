@@ -63,6 +63,11 @@ namespace GraphGame
         public override string ToString()
         {
             var s = "";
+
+            // 输出图信息
+            // foreach (var kvp in this.players)
+            //     s += kvp.Value.ToString();
+
             foreach (var kvp in this.Scores)
             {
                 s += string.Format("{0} -> {1}\n", kvp.Key, kvp.Value);
