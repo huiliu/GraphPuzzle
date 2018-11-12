@@ -74,6 +74,7 @@ namespace GraphGame
             var score = 0;
             foreach (var s in resolvers)
             {
+                int nodeScore = 1;
                 foreach (var id in s)
                 {
                     var rr = 0;
@@ -82,11 +83,12 @@ namespace GraphGame
                     if (rr % 2 == 0 && cc % 2 == 0)
                     {
                         var node = g.GetNode(id);
-                        score += this.CalcScoreStrategy(node.AllSuccessor.Count);
+                        nodeScore *= this.CalcScoreStrategy(node.AllSuccessor.Count);
+                        score += nodeScore;
                     }
                 }
 
-                if (s[0] == s[s.Count - 1])
+                if (s.Count > 1 && s[0] == s[s.Count - 1])
                     score += this.LoopBufferScore;
             }
 
@@ -99,16 +101,14 @@ namespace GraphGame
         {
             switch (count)
             {
-                case 0:
-                    return 0;
-                case 1:
                 case 2:
                     return 1;
                 case 3:
                     return 2;
                 case 4:
+                    return 4;
                 default:
-                    return 3;
+                    return 0;
             }
         }
 
