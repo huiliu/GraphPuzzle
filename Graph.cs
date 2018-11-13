@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace GraphGame
+namespace GraphGame.Logic
 {
     public class GraphNode
     {
@@ -158,8 +158,8 @@ namespace GraphGame
                     this.DFSTraverse(this.GetNode(id));
                 }
 
-                if (isEndNode)
-                    Console.WriteLine(this.TraverseRecord.ToString());
+                //if (isEndNode)
+                //    Console.WriteLine(this.TraverseRecord.ToString());
             }
             while (false);
 

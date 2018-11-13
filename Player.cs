@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace GraphGame
+namespace GraphGame.Logic
 {
     public class Player
     {
@@ -23,7 +23,8 @@ namespace GraphGame
 
         public void AddColor(Color color)
         {
-            this.graphs.Add(color, new Graph(this.NodeCount));
+            this.ColorGraph = new Graph(this.NodeCount);
+            this.graphs.Add(color, this.ColorGraph);
             this.Scores.Add(color, 0);
         }
 
@@ -49,6 +50,42 @@ namespace GraphGame
             var dst = this.GetNodeIndex(r1, c1);
 
             g.RemoveEdge(src, dst);
+        }
+
+        // 记录任一颜色的graph，用于查找一个空节点
+        private Graph ColorGraph;
+        public void GetEmptyNode(out int r, out int c)
+        {
+            r = c = -1;
+            for (var i = 0; i < this.NodeCount; ++i)
+            {
+                var node = this.ColorGraph.GetNode(i);
+                if (node.AllSuccessor.Count > 0)
+                    continue;
+
+                var r1 = 0;
+                var c1 = 0;
+                this.GetRowCol(i, out r1, out c1);
+                if (r1 % 2 != 1 || c1 % 2 != 1)
+                    continue;
+
+                bool foundFlag = true;
+                foreach (var kvp in this.graphs)
+                {
+                    if (kvp.Value.GetNode(i).AllSuccessor.Count != 0)
+                    {
+                        foundFlag = false;
+                        break;
+                    }
+                }
+
+                if (foundFlag)
+                {
+                    r = r1;
+                    c = c1;
+                    return;
+                }
+            }
         }
 
         // color -> score
