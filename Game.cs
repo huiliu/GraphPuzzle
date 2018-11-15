@@ -5,6 +5,9 @@ namespace GraphGame.Logic
 {
     public class Game
     {
+        // 落子事件
+        public event Action OnSquareAck;
+
         private Dictionary<Color, int> weights = new Dictionary<Color, int>{
             {Color.None, 100},
             {Color.Red, 500},
@@ -12,19 +15,26 @@ namespace GraphGame.Logic
             {Color.Blue, 300},
         };
 
-        private const int kRowSquare = 4;
-        private const int kColSquare = 4;
+        private const int kRowSquare = 10;
+        private const int kColSquare = 10;
         private SquareGenerator SquareGenerator;
         private GameBoard GameBoard;
 
         public Square CurrentSquare { get; private set; }
         public Square NextSquare { get; private set; }
-        public int kTimeInterval = 3;
+        public int kTimeInterval = 10;  // 秒
         public float RemainTime { get; private set; }
-        public Game()
+        public int RowCount { get; private set; }
+        public int ColCount { get; private set; }
+        public int GraphWidth { get; private set; }
+        public Game(int r, int c)
         {
-            this.SquareGenerator = new SquareGenerator(this.weights, kRowSquare * kColSquare);
-            this.GameBoard = new GameBoard(2 * kRowSquare + 1, 2 * kColSquare + 1);
+            this.RowCount = r;
+            this.ColCount = c;
+            this.GraphWidth = 2 * r + 1;
+
+            this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
+            this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
 
         public string RankUser { get; private set; }
@@ -37,7 +47,6 @@ namespace GraphGame.Logic
                 this.AddPlayer(buid);
 
             this.RankUser = auid;
-            this.GameBoard.AddColor(Color.None);
             this.GameBoard.AddColor(Color.Red);
             this.GameBoard.AddColor(Color.Green);
             this.GameBoard.AddColor(Color.Blue);
@@ -61,6 +70,10 @@ namespace GraphGame.Logic
             this.GameBoard.RemovePlayer(uid);
         }
 
+        public int GetPlayerScore(string uid)
+        {
+            return this.GameBoard.PlayerScores[uid];
+        }
         /// 落子
         public void Ack(string uid, int r, int c)
         {
@@ -69,15 +82,13 @@ namespace GraphGame.Logic
             var drColor = this.CurrentSquare.Nodes[2];
             var dlColor = this.CurrentSquare.Nodes[3];
 
-            Console.WriteLine("[{0}]落下Square: {1}", this.RankUser, this.CurrentSquare.ToString());
-
-            this.GameBoard.AddEdge(uid, r - 1, c - 1, r, c, tlColor);
-            this.GameBoard.AddEdge(uid, r - 1, c + 1, r, c, trColor);
-            this.GameBoard.AddEdge(uid, r + 1, c + 1, r, c, drColor);
-            this.GameBoard.AddEdge(uid, r + 1, c - 1, r, c, dlColor);
-
+            this.GameBoard.AddBlock(uid, r, c, tlColor, trColor, drColor, dlColor);
             this.GameBoard.CalcScore(r, c);
+
             this.Next();
+            this.CheckGameOver();
+
+            this.FireAckEvent();
         }
 
         public void Update(float dt)
@@ -91,8 +102,11 @@ namespace GraphGame.Logic
             {
                 this.RandomAck();
             }
+        }
 
-            this.CheckGameOver();
+        public IList<Color> GetSquareColor(int idx)
+        {
+            return this.GameBoard.GetNodeColor(idx);
         }
 
         /// 玩家没有落子，随机落子
@@ -102,7 +116,6 @@ namespace GraphGame.Logic
             var c = 0;
 
             this.GameBoard.GetEmptyNode(this.RankUser, out r, out c);
-            //Console.WriteLine("[{0}]随机落子({1}, {2})", this.RankUser, r, c);
             this.Ack(this.RankUser, r, c);
         }
 
@@ -118,6 +131,8 @@ namespace GraphGame.Logic
 
             this.CurrentSquare = this.NextSquare;
             this.NextSquare = this.SquareGenerator.IsEmpty ? null : this.SquareGenerator.GetSquare();
+
+            //UnityEngine.Debug.Log(string.Format("Square Current: [{0}] Next: [{1}]", this.CurrentSquare.ToString(), this.NextSquare.ToString()));
         }
 
         public Action OnGameOver;
@@ -140,6 +155,11 @@ namespace GraphGame.Logic
         public override string ToString()
         {
             return this.GameBoard.ToString();
+        }
+
+        private void FireAckEvent()
+        {
+            this.OnSquareAck.SafeInvoke();
         }
     }
 }

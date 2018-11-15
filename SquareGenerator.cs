@@ -6,11 +6,17 @@ namespace GraphGame.Logic
     public class Square
     {
         public List<Color> Nodes { get; private set; }
-        public Square() { this.Nodes = new List<Color>((int)Color.Max); }
+        public Square() { this.Nodes = new List<Color>((int)Direction.Max); }
 
         public void Reset()
         {
             this.Nodes.Clear();
+        }
+
+        public void SetColor(Direction direction, Color color)
+        {
+            var i = (int)direction;
+            this.Nodes[i] = color;
         }
 
         public void AppendColor(Color color)
@@ -90,16 +96,14 @@ namespace GraphGame.Logic
 
         public bool IsEmpty { get { return this.CurrentIndex >= this.SquareCount; } }
 
-        private Square Square = new Square();
         public Square GetSquare()
         {
-            this.Square.Reset();
-
+            var Square = new Square();
             foreach (var sc in this.ColorSource)
-                this.Square.AppendColor(sc[this.CurrentIndex]);
+                Square.AppendColor(sc[this.CurrentIndex]);
 
             ++this.CurrentIndex;
-            return this.Square;
+            return Square;
         }
     }
 }
