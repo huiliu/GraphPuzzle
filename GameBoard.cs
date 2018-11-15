@@ -47,9 +47,18 @@ namespace GraphGame.Logic
         {
             this.players[uid].AddEdge(r0, c0, r1, c1, color);
         }
+
         public void RemoveEdge(string uid, int r0, int c0, int r1, int c1, Color color)
         {
             this.players[uid].RemoveEdge(r0, c0, r1, c1, color);
+        }
+
+        public void AddBlock(string uid, int r, int c, Color color1, Color color2, Color color3, Color color4)
+        {
+            if (color1 != Color.None) this.players[uid].AddEdge(r, c, r - 1, c - 1, color1);
+            if (color2 != Color.None) this.players[uid].AddEdge(r, c, r - 1, c + 1, color2);
+            if (color3 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c - 1, color3);
+            if (color4 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c + 1, color4);
         }
 
         /// 感觉这个设计不好，有坏代码的味道
