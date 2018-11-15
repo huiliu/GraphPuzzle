@@ -58,8 +58,8 @@ namespace GraphGame.Logic
         {
             if (color1 != Color.None) this.players[uid].AddEdge(r, c, r - 1, c - 1, color1);
             if (color2 != Color.None) this.players[uid].AddEdge(r, c, r - 1, c + 1, color2);
-            if (color3 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c - 1, color3);
-            if (color4 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c + 1, color4);
+            if (color3 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c + 1, color3);
+            if (color4 != Color.None) this.players[uid].AddEdge(r, c, r + 1, c - 1, color4);
         }
 
         /// 感觉这个设计不好，有坏代码的味道
