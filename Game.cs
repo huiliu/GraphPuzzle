@@ -22,7 +22,7 @@ namespace GraphGame.Logic
 
         public Square CurrentSquare { get; private set; }
         public Square NextSquare { get; private set; }
-        public int kTimeInterval = 10;  // 秒
+        public int kTimeInterval = 30;  // 秒
         public float RemainTime { get; private set; }
         public int RowCount { get; private set; }
         public int ColCount { get; private set; }
@@ -42,6 +42,7 @@ namespace GraphGame.Logic
         public void Start(string auid, string buid = "")
         {
             this.startFlag = true;
+            this.RemainTime = kTimeInterval;
             this.AddPlayer(auid);
             if (!string.IsNullOrEmpty(buid))
                 this.AddPlayer(buid);
@@ -74,6 +75,12 @@ namespace GraphGame.Logic
         {
             return this.GameBoard.PlayerScores[uid];
         }
+
+        public IDictionary<Color, IList<List<int>>> GetPlayerPath(string uid)
+        {
+            return this.GameBoard.GetPlayerPath(uid);
+        }
+
         /// 落子
         public void Ack(string uid, int r, int c)
         {
@@ -84,7 +91,6 @@ namespace GraphGame.Logic
 
             this.GameBoard.AddBlock(uid, r, c, tlColor, trColor, drColor, dlColor);
             this.GameBoard.CalcScore(r, c);
-
             this.Next();
             this.CheckGameOver();
 
@@ -133,6 +139,12 @@ namespace GraphGame.Logic
             this.NextSquare = this.SquareGenerator.IsEmpty ? null : this.SquareGenerator.GetSquare();
 
             //UnityEngine.Debug.Log(string.Format("Square Current: [{0}] Next: [{1}]", this.CurrentSquare.ToString(), this.NextSquare.ToString()));
+        }
+
+        public void IndxConvertToRowCol(int idx, out int r, out int c)
+        {
+            c = idx % this.GraphWidth;
+            r = (idx - c) / this.GraphWidth;
         }
 
         public Action OnGameOver;
