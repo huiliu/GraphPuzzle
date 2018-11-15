@@ -76,7 +76,7 @@ namespace GraphGame.Logic
             return this.GameBoard.PlayerScores[uid];
         }
 
-        public IDictionary<Color, IList<List<int>>> GetPlayerPath(string uid)
+        public Dictionary<Color, List<List<int>>> GetPlayerPath(string uid)
         {
             return this.GameBoard.GetPlayerPath(uid);
         }

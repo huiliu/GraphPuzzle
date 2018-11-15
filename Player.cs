@@ -122,8 +122,8 @@ namespace GraphGame.Logic
             return this.NodeColor.AsReadOnly();
         }
 
-        private Dictionary<Color, IList<List<int>>> ColorPath = new Dictionary<Color, IList<List<int>>>();
-        public IDictionary<Color, IList<List<int>>> GetPath()
+        private Dictionary<Color, List<List<int>>> ColorPath = new Dictionary<Color, List<List<int>>>();
+        public Dictionary<Color, List<List<int>>> GetPath()
         {
             foreach (var kvp in graphs)
             {

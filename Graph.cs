@@ -128,7 +128,7 @@ namespace GraphGame.Logic
             return this.Nodes[id];
         }
 
-        public IList<List<int>> Solutions { get { return solvers.AsReadOnly(); } }
+        public List<List<int>> Solutions { get { return solvers; } }
         private List<List<int>> solvers = new List<List<int>>();
         public List<List<int>> Traverse(int rootID)
         {

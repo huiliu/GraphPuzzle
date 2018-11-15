@@ -91,7 +91,7 @@ namespace GraphGame.Logic
             return this.NodeColor;
         }
 
-        public IDictionary<Color, IList<List<int>>> GetPlayerPath(string uid)
+        public Dictionary<Color, List<List<int>>> GetPlayerPath(string uid)
         {
             return this.players[uid].GetPath();
         }
