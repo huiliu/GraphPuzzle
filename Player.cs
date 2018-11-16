@@ -3,6 +3,18 @@ using System.Collections.Generic;
 
 namespace GraphGame.Logic
 {
+    public struct GraphPath
+    {
+        public Color Color { get; private set; }
+        public IList<int> Path { get; private set; }
+
+        public GraphPath(Color color, IList<int> p)
+        {
+            this.Color = color;
+            this.Path = p;
+        }
+    }
+
     public class Player
     {
         public string UID { get; private set; }
@@ -122,12 +134,26 @@ namespace GraphGame.Logic
             return this.NodeColor.AsReadOnly();
         }
 
-        private Dictionary<Color, List<List<int>>> ColorPath = new Dictionary<Color, List<List<int>>>();
-        public Dictionary<Color, List<List<int>>> GetPath()
+        /// <summary>
+        /// 取得节点idx的color边数
+        /// </summary>
+        /// <param name="color"></param>
+        /// <param name="idx"></param>
+        /// <returns></returns>
+        public int GetNodeColorEdgeCount(Color color, int idx)
+        {
+            var g = this.graphs[color];
+            return g.GetNodeEdgeCount(idx);
+        }
+
+        private Queue<GraphPath> ColorPath = new Queue<GraphPath>();
+        public Queue<GraphPath> GetPath()
         {
             foreach (var kvp in graphs)
             {
-                this.ColorPath[kvp.Key] = kvp.Value.Solutions;
+                foreach (var s in kvp.Value.Solutions)
+                    if (s.Count > 1)    // 由于落点处可能没有颜色kvp.Key的边存在，导致返回一个点的路径
+                        this.ColorPath.Enqueue(new GraphPath(kvp.Key, s));
             }
 
             return this.ColorPath;

@@ -76,9 +76,14 @@ namespace GraphGame.Logic
             return this.GameBoard.PlayerScores[uid];
         }
 
-        public Dictionary<Color, List<List<int>>> GetPlayerPath(string uid)
+        public Queue<GraphPath> GetPlayerPath(string uid)
         {
             return this.GameBoard.GetPlayerPath(uid);
+        }
+
+        public int GetPlayerColorEdgeCount(string uid, Color color, int idx)
+        {
+            return this.GameBoard.GetPlayerColorEdgeCount(uid, color, idx);
         }
 
         /// 落子

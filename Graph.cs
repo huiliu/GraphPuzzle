@@ -111,14 +111,17 @@ namespace GraphGame.Logic
                 this.Nodes.Add(new GraphNode(i));
         }
 
+        public int EdgeCount { get; private set; }
         public void AddEdge(int source, int sink)
         {
+            ++this.EdgeCount;
             this.Nodes[source].AddSuccessor(sink);
             this.Nodes[sink].AddSuccessor(source);
         }
 
         public void RemoveEdge(int source, int sink)
         {
+            --this.EdgeCount;
             this.Nodes[source].RemoveSuccessor(sink);
             this.Nodes[sink].RemoveSuccessor(source);
         }
@@ -128,12 +131,18 @@ namespace GraphGame.Logic
             return this.Nodes[id];
         }
 
+        public int GetNodeEdgeCount(int id)
+        {
+            return this.GetNode(id).AllSuccessor.Count;
+        }
+
         public List<List<int>> Solutions { get { return solvers; } }
         private List<List<int>> solvers = new List<List<int>>();
         public List<List<int>> Traverse(int rootID)
         {
             this.solvers.Clear();
-            this.DFSTraverse(this.GetNode(rootID));
+            if (this.EdgeCount > 0)
+                this.DFSTraverse(this.GetNode(rootID));
 
             return this.solvers;
         }

@@ -91,9 +91,14 @@ namespace GraphGame.Logic
             return this.NodeColor;
         }
 
-        public Dictionary<Color, List<List<int>>> GetPlayerPath(string uid)
+        public Queue<GraphPath> GetPlayerPath(string uid)
         {
             return this.players[uid].GetPath();
+        }
+
+        public int GetPlayerColorEdgeCount(string uid, Color color, int idx)
+        {
+            return this.players[uid].GetNodeColorEdgeCount(color, idx);
         }
 
         // uid+color -> score
