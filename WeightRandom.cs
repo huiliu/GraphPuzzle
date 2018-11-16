@@ -71,4 +71,64 @@ namespace GraphGame.Logic
                 this.Weights.Add(kvp.Key, kvp.Value);
         }
     }
+
+    public class WeightRandomTest
+    {
+        private static WeightRandomTest instance = new WeightRandomTest();
+        public static WeightRandomTest Instance { get { return instance; } }
+        private Dictionary<int, int> weights = new Dictionary<int, int> { { 1, 100 }, { 2, 100 }, { 3, 100 } };
+        private Dictionary<int, int> result = new Dictionary<int, int>();
+
+        private static int KeyCount = 10;
+        private int TotalWeight = 0;
+        private void InitData()
+        {
+            this.weights.Clear();
+            this.result.Clear();
+
+            var rnd = new Random();
+            for (var i = 0; i < KeyCount; ++i)
+            {
+                // var key = rnd.Next(0, 100);
+                var key = i;
+                var w = rnd.Next(100, 300);
+
+                this.weights.Add(key, w);
+                this.result.Add(key, 0);
+
+                this.TotalWeight += w;
+            }
+
+        }
+
+        private static int RunTimes = 1000000;
+        public void Run()
+        {
+            this.InitData();
+
+            var weightRandom = new WeightRandom<int>(this.weights);
+            weightRandom.InitRandom(0);
+
+            for (var i = 0; i < RunTimes; ++i)
+            {
+                var v = weightRandom.Next();
+                ++this.result[v];
+            }
+
+            this.Print();
+        }
+
+        private void Print()
+        {
+            Console.WriteLine("Config:");
+            foreach (var kvp in this.weights)
+                Console.WriteLine("\t{0}: {1}/{2}", kvp.Key, kvp.Value, kvp.Value * 1.0f / this.TotalWeight);
+
+            Console.WriteLine("Result:");
+            foreach (var kvp in this.result)
+            {
+                Console.WriteLine("\t{0}: {1}/{2}", kvp.Key, kvp.Value, kvp.Value * 1.0f / RunTimes);
+            }
+        }
+    }
 }

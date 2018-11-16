@@ -57,6 +57,7 @@ namespace GraphGame.Logic
 
             Console.WriteLine(game.ToString());
 
+WeightRandomTest.Instance.Run();
             Console.Read();
         }
     }
