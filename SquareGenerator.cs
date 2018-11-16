@@ -5,23 +5,19 @@ namespace GraphGame.Logic
 {
     public class Square
     {
+        // TL, TR, DR, DL
         public List<Color> Nodes { get; private set; }
-        public Square() { this.Nodes = new List<Color>((int)Direction.Max); }
-
-        public void Reset()
+        public Square()
         {
-            this.Nodes.Clear();
+            this.Nodes = new List<Color>((int)Direction.Max);
+            for (var i = 0; i < (int)Direction.Max; ++i)
+                this.Nodes.Add(Color.None);
         }
 
         public void SetColor(Direction direction, Color color)
         {
             var i = (int)direction;
             this.Nodes[i] = color;
-        }
-
-        public void AppendColor(Color color)
-        {
-            this.Nodes.Add(color);
         }
 
         public void RemoveColor(int idx)
@@ -39,7 +35,13 @@ namespace GraphGame.Logic
         }
     }
 
+    public interface ISquareGenerator
+    {
+        Square GetSquare();
+    }
+
     public class SquareGenerator
+        : ISquareGenerator
     {
         private Dictionary<Color, int> ColorWeight = new Dictionary<Color, int>();
         private List<int> Weights = new List<int>();
@@ -47,9 +49,9 @@ namespace GraphGame.Logic
         private int TotalValue = 0;
         private int SquareCount = 0;
         private Random random;
-        private const int kSquareEdgeCount = 4;
+        private const int kSquareEdgeCount = (int)Direction.Max;
         private int CurrentIndex = 0;
-        private List<List<Color>> ColorSource = new List<List<Color>>(kSquareEdgeCount);   // 因为只有四条边
+        private List<List<Color>> EdgeColorSource = new List<List<Color>>(kSquareEdgeCount);   // 因为只有四条边
 
         /// 各色彩权重字典
         /// None: 100, Red: 500, Green: 200, Blue: 400
@@ -73,12 +75,14 @@ namespace GraphGame.Logic
                 this.Weights.Add(this.TotalValue);
             }
 
+            // 每条边对应一个色彩队列
             for (var i = 0; i < kSquareEdgeCount; ++i)
-                this.ColorSource.Add(new List<Color>(this.SquareCount));
+                this.EdgeColorSource.Add(new List<Color>(this.SquareCount));
 
+            // 向每条边色彩队列中随机放入颜色
             for (var i = 0; i < this.SquareCount; ++i)
             {
-                foreach (var cs in this.ColorSource)
+                foreach (var cs in this.EdgeColorSource)
                     cs.Add(this.GetColor(random.Next(0, this.TotalValue)));
             }
         }
@@ -99,11 +103,47 @@ namespace GraphGame.Logic
         public Square GetSquare()
         {
             var Square = new Square();
-            foreach (var sc in this.ColorSource)
-                Square.AppendColor(sc[this.CurrentIndex]);
+            for (var i = 0; i < kSquareEdgeCount; ++i)
+                Square.SetColor((Direction)i, this.EdgeColorSource[i][this.CurrentIndex]);
 
             ++this.CurrentIndex;
             return Square;
         }
+    }
+
+    public class NewGenerator
+        : ISquareGenerator
+    {
+        private WeightRandom<SquareRandom> weightRandom;
+
+        private readonly int SquareCount;
+        public NewGenerator(int squareCount)
+        {
+            this.SquareCount = squareCount;
+        }
+
+        private Random random;
+        public void Init(Dictionary<SquareType, int> squareWeights, Dictionary<SquareType, Dictionary<Color, int>> weights, int seed)
+        {
+            this.random = new Random(seed);
+            var squareDict = new Dictionary<SquareRandom, int>();
+            foreach (var kvp in squareWeights)
+            {
+                var sr = SquareRandomFactory.Create(kvp.Key, weights[kvp.Key], this.random.Next());
+                squareDict.Add(sr, kvp.Value);
+            }
+
+            this.weightRandom = new WeightRandom<SquareRandom>(squareDict);
+            this.weightRandom.InitRandom(this.random.Next());
+        }
+
+        private int Counter = 0;
+        public Square GetSquare()
+        {
+            ++Counter;
+            return this.weightRandom.Next().GetSquare();
+        }
+
+        public bool IsEmpty { get { return this.Counter >= this.SquareCount; } }
     }
 }

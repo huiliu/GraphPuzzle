@@ -8,16 +8,72 @@ namespace GraphGame.Logic
         // 落子事件
         public event Action OnSquareAck;
 
-        private Dictionary<Color, int> weights = new Dictionary<Color, int>{
+        #region 配置示例
+        private static Dictionary<Color, int> weights = new Dictionary<Color, int>{
             {Color.None, 100},
             {Color.Red, 500},
             {Color.Green, 300},
             {Color.Blue, 300},
         };
 
+        /// <summary>
+        /// 不同类型方块出现概率
+        /// </summary>
+        private static Dictionary<SquareType, int> SquareWeights = new Dictionary<SquareType, int>
+        {
+            {SquareType.A, 20},
+            {SquareType.B, 50},
+            {SquareType.C, 80},
+            {SquareType.D, 100},
+            {SquareType.E, 10},
+        };
+
+        /// <summary>
+        /// 方块中颜色概率
+        /// </summary>
+        private static Dictionary<SquareType, Dictionary<Color, int>> SquareColorWeights = new Dictionary<SquareType, Dictionary<Color, int>>
+        {
+            {   SquareType.A,
+                new Dictionary<Color, int>{
+                    { Color.Red, 100 },
+                    { Color.Green, 100 },
+                    { Color.Blue, 100 },
+                }
+            },
+            {   SquareType.B,
+                new Dictionary<Color, int>{
+                    { Color.Red, 100 },
+                    { Color.Green, 100 },
+                    { Color.Blue, 100 },
+                }
+            },
+            {   SquareType.C,
+                new Dictionary<Color, int>{
+                    { Color.Red, 100 },
+                    { Color.Green, 100 },
+                    { Color.Blue, 100 },
+                }
+            },
+            {   SquareType.D,
+                new Dictionary<Color, int>{
+                    { Color.Red, 100 },
+                    { Color.Green, 100 },
+                    { Color.Blue, 100 },
+                }
+            },
+            {   SquareType.E,
+                new Dictionary<Color, int>{
+                    { Color.Red, 100 },
+                    { Color.Green, 100 },
+                    { Color.Blue, 100 },
+                }
+            },
+        };
+        #endregion
+
         private const int kRowSquare = 10;
         private const int kColSquare = 10;
-        private SquareGenerator SquareGenerator;
+        private NewGenerator SquareGenerator;
         private GameBoard GameBoard;
 
         public Square CurrentSquare { get; private set; }
@@ -33,7 +89,9 @@ namespace GraphGame.Logic
             this.ColCount = c;
             this.GraphWidth = 2 * r + 1;
 
-            this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
+            //this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
+            this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount);
+            this.SquareGenerator.Init(SquareWeights, SquareColorWeights, 0);
             this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
 
