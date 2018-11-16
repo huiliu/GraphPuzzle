@@ -173,7 +173,8 @@ namespace GraphGame.Logic
             }
             while (false);
 
-            if (isEndNode)
+            // 超过两个点相连才算一条合法通路
+            if (isEndNode && this.TraverseRecord.CurrentNodes.Count > 2)
                 this.solvers.Add(new List<int>(this.TraverseRecord.CurrentNodes));
 
             this.TraverseRecord.Pop();
