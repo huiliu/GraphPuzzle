@@ -59,7 +59,7 @@ namespace GraphGame.Logic
         {
             this.SquareCount = count;
             this.ColorWeight = colorWeight;
-            this.random = new Random(1);
+            this.random = new Random();
 
             this.InitWeight();
         }
