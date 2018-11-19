@@ -190,33 +190,16 @@ namespace GraphGame.Logic
                     if (rr % 2 == 0 && cc % 2 == 0)
                     {
                         var node = g.GetNode(id);
-                        nodeScore *= this.CalcScoreStrategy(node.AllSuccessor.Count);
+                        nodeScore *= Utils.CalcScoreStrategy(node.AllSuccessor.Count);
                         score += nodeScore;
                     }
                 }
 
                 if (s.Count > 1 && s[0] == s[s.Count - 1])
-                    score += this.LoopBufferScore;
+                    score += Utils.LoopBufferScore;
             }
 
             return score;
-        }
-
-        private int LoopBufferScore { get { return 2; } }
-        /// 节点得分计算策略
-        private int CalcScoreStrategy(int count)
-        {
-            switch (count)
-            {
-                case 2:
-                    return 1;
-                case 3:
-                    return 2;
-                case 4:
-                    return 4;
-                default:
-                    return 0;
-            }
         }
 
         private int GetNodeIndex(int r, int c)

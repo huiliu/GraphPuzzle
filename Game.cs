@@ -21,11 +21,11 @@ namespace GraphGame.Logic
         /// </summary>
         private static Dictionary<SquareType, int> SquareWeights = new Dictionary<SquareType, int>
         {
-            {SquareType.A, 20},
-            {SquareType.B, 50},
-            {SquareType.C, 80},
-            {SquareType.D, 100},
-            {SquareType.E, 10},
+            {SquareType.A, 10},
+            {SquareType.B, 16},
+            {SquareType.C, 16},
+            {SquareType.D, 128},
+            {SquareType.E, 30},
         };
 
         /// <summary>
@@ -35,35 +35,35 @@ namespace GraphGame.Logic
         {
             {   SquareType.A,
                 new Dictionary<Color, int>{
-                    { Color.Red, 100 },
+                    { Color.Red, 200 },
                     { Color.Green, 100 },
                     { Color.Blue, 100 },
                 }
             },
             {   SquareType.B,
                 new Dictionary<Color, int>{
-                    { Color.Red, 100 },
+                    { Color.Red, 300 },
                     { Color.Green, 100 },
                     { Color.Blue, 100 },
                 }
             },
             {   SquareType.C,
                 new Dictionary<Color, int>{
-                    { Color.Red, 100 },
+                    { Color.Red, 400 },
                     { Color.Green, 100 },
                     { Color.Blue, 100 },
                 }
             },
             {   SquareType.D,
                 new Dictionary<Color, int>{
-                    { Color.Red, 100 },
+                    { Color.Red, 200 },
                     { Color.Green, 100 },
                     { Color.Blue, 100 },
                 }
             },
             {   SquareType.E,
                 new Dictionary<Color, int>{
-                    { Color.Red, 100 },
+                    { Color.Red, 200 },
                     { Color.Green, 100 },
                     { Color.Blue, 100 },
                 }
