@@ -91,7 +91,7 @@ namespace GraphGame.Logic
 
             //this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
             this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount);
-            this.SquareGenerator.Init(SquareWeights, SquareColorWeights, 0);
+            this.SquareGenerator.Init(SquareWeights, SquareColorWeights, (int) DateTime.Now.Ticks);
             this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
 

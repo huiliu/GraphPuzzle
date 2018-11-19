@@ -8,8 +8,8 @@ namespace GraphGame.Logic
     public enum SquareType
     {
         A,
-        B,
-        C,
+        B,     // 两条线相邻
+        C,     // 两条线相对
         D,
         E,
     }
