@@ -95,6 +95,20 @@ namespace GraphGame.Logic
             this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
 
+        private readonly LevelData cfg;
+        public Game(LevelData config)
+        {
+            this.cfg = config;
+
+            this.RowCount = this.cfg.BoardHeight;
+            this.ColCount = this.cfg.BoardWidth;
+            this.GraphWidth = 2 * this.ColCount + 1;
+
+            //this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
+            this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount);
+            this.SquareGenerator.Init(this.cfg.GetSquareWeight(), this.cfg.GetSquareColorWeight(), this.cfg.Seed);
+            this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
+        }
         public string RankUser { get; private set; }
         private bool startFlag = false;
         public void Start(string auid, string buid = "")
