@@ -21,18 +21,18 @@ namespace GraphGame.Logic
         public int ColCount { get; private set; }
         public int GraphWidth { get; private set; }
 
-        private readonly LevelData cfg;
+        public LevelData Cfg { get; private set; }
         public Game(LevelData config)
         {
-            this.cfg = config;
+            this.Cfg = config;
 
-            this.RowCount = this.cfg.BoardHeight;
-            this.ColCount = this.cfg.BoardWidth;
+            this.RowCount = this.Cfg.BoardHeight;
+            this.ColCount = this.Cfg.BoardWidth;
             this.GraphWidth = 2 * this.ColCount + 1;
 
             //this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
             this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount);
-            this.SquareGenerator.Init(this.cfg.GetSquareWeight(), this.cfg.GetSquareColorWeight(), this.cfg.Seed);
+            this.SquareGenerator.Init(this.Cfg.GetSquareWeight(), this.Cfg.GetSquareColorWeight(), this.Cfg.Seed);
             this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
         public string RankUser { get; private set; }
