@@ -31,7 +31,7 @@ namespace GraphGame.Logic
             this.GraphWidth = 2 * this.ColCount + 1;
 
             //this.SquareGenerator = new SquareGenerator(this.weights, this.RowCount * this.ColCount);
-            this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount);
+            this.SquareGenerator = new NewGenerator(this.RowCount * this.ColCount - this.Cfg.unUsedSquareID.Count);
             this.SquareGenerator.Init(this.Cfg.GetSquareWeight(), this.Cfg.GetSquareColorWeight(), this.Cfg.Seed);
             this.GameBoard = new GameBoard(2 * this.RowCount + 1, 2 * this.ColCount + 1);
         }
