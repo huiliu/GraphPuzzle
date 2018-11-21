@@ -119,7 +119,7 @@ namespace GraphGame.Logic
             this.Nodes[sink].AddSuccessor(source);
         }
 
-        public void RemoveEdge(int source, int sink)
+        public void DeleteEdge(int source, int sink)
         {
             --this.EdgeCount;
             this.Nodes[source].RemoveSuccessor(sink);

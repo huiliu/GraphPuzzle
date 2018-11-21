@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GraphGame.Logic
 {
@@ -6,12 +7,11 @@ namespace GraphGame.Logic
     {
         static void Main(string[] args)
         {
-            var game = new GameBoard(11, 11);
+            var colors = new HashSet<Color> { Color.Red, Color.Green, Color.Blue };
+            var game = new GameBoard(11, 11, colors);
             game.AddPlayer("xxx");
-            game.AddColor(Color.Red);
-            game.AddColor(Color.Blue);
-            game.AddColor(Color.Green);
 
+#if false
             game.AddBlock("xxx", 1, 1, Color.Blue, Color.Red, Color.Red, Color.Blue);
             game.AddBlock("xxx", 1, 3, Color.Red, Color.Green, Color.Green, Color.Blue);
             game.CalcScore(1, 3);
@@ -54,10 +54,11 @@ namespace GraphGame.Logic
             game.CalcScore(7, 7);
             game.AddBlock("xxx", 7, 9, Color.None, Color.Green, Color.Red, Color.Red);
             game.CalcScore(7, 9); 
+#endif
 
             Console.WriteLine(game.ToString());
 
-WeightRandomTest.Instance.Run();
+            WeightRandomTest.Instance.Run();
             Console.Read();
         }
     }

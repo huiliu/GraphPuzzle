@@ -63,5 +63,15 @@ namespace GraphGame.Logic
             var idx = levelData.unUsedSquareID.FindIndex(i => i == id);
             return idx != -1;
         }
+
+        public static HashSet<Color> Colors(this LevelData levelData)
+        {
+            var set = new HashSet<Color>();
+            foreach (var s in levelData.Squares)
+                foreach (var c in s.ColorWeights)
+                    set.Add(c.Color);
+
+            return set;
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 namespace GraphGame.Logic
 {
-    public static class Utils
+    public static class ActionEx
     {
         public static void SafeInvoke(this Action action)
         {
@@ -13,9 +13,10 @@ namespace GraphGame.Logic
             {
                 action.Invoke();
             }
-            catch (Exception err)
+            catch(Exception err)
             {
-                System.Diagnostics.Debug.Assert(false, err.Message);
+                System.Diagnostics.Debug.WriteLine(err.Message);
+                System.Diagnostics.Debug.Assert(false);
             }
         }
 
@@ -28,9 +29,10 @@ namespace GraphGame.Logic
             {
                 action.Invoke(t);
             }
-            catch (Exception err)
+            catch(Exception err)
             {
-                System.Diagnostics.Debug.Assert(false, err.Message);
+                System.Diagnostics.Debug.WriteLine(err.Message);
+                System.Diagnostics.Debug.Assert(false);
             }
         }
 
@@ -43,9 +45,10 @@ namespace GraphGame.Logic
             {
                 action.Invoke(t1, t2);
             }
-            catch (Exception err)
+            catch(Exception err)
             {
-                System.Diagnostics.Debug.Assert(false, err.Message);
+                System.Diagnostics.Debug.WriteLine(err.Message);
+                System.Diagnostics.Debug.Assert(false);
             }
         }
 
@@ -58,35 +61,26 @@ namespace GraphGame.Logic
             {
                 action.Invoke(t1, t2, t3);
             }
-            catch (Exception err)
+            catch(Exception err)
             {
-                System.Diagnostics.Debug.Assert(false, err.Message);
+                System.Diagnostics.Debug.WriteLine(err.Message);
+                System.Diagnostics.Debug.Assert(false);
             }
         }
 
-        public static Direction ToDirection(int r0, int c0, int r1, int c1)
+        public static void SafeInvoke<T1, T2, T3, T4>(this Action<T1, T2, T3, T4> action, T1 t1, T2 t2, T3 t3, T4 t4)
         {
-            if (r1 > r0)
-                return c1 > c0 ? Direction.DownRight : Direction.DownLeft;
-            else
-                return c1 < c0 ? Direction.TopLeft : Direction.TopRight;
-        }
+            if (action == null)
+                return;
 
-        public static int LoopBufferScore { get { return 2; } }
-
-        /// 节点得分计算策略
-        public static int CalcScoreStrategy(int count)
-        {
-            switch (count)
+            try
             {
-                case 2:
-                    return 1;
-                case 3:
-                    return 2;
-                case 4:
-                    return 4;
-                default:
-                    return 0;
+                action.SafeInvoke(t1, t2, t3, t4);
+            }
+            catch(Exception err)
+            {
+                System.Diagnostics.Debug.WriteLine(err.Message);
+                System.Diagnostics.Debug.Assert(false);
             }
         }
     }
