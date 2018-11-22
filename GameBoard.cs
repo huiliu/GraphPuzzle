@@ -8,14 +8,15 @@ namespace GraphGame.Logic
         public LevelData Cfg { get; private set; }
         public int RowSquareCount { get; private set; }
         public int ColSquareCount { get; private set; }
+        public Recorder Recorder { get; set; }
 
         private int BoardNodeWidth;     // 节点数
         private int BoardNodeHeight;    // 节点数
-        private Array2LinearHelper Array2LinearHelper;
+        private ArrayToLinearHelper Array2LinearHelper;
         private List<int> SquareNodeID;
         private HashSet<Color> Colors;
         private NewGenerator SquareGenerator;
-        public void Init(LevelData cfg)
+        public void Init(LevelData cfg, int seed)
         {
             this.Cfg = cfg;
 
@@ -26,10 +27,10 @@ namespace GraphGame.Logic
 
             this.BoardNodeWidth = this.ColSquareCount * 2 + 1;
             this.BoardNodeHeight = this.RowSquareCount * 2 + 1;
-            this.Array2LinearHelper = new Array2LinearHelper(this.BoardNodeWidth, this.BoardNodeHeight);
+            this.Array2LinearHelper = new ArrayToLinearHelper(this.BoardNodeWidth, this.BoardNodeHeight);
 
             this.SquareGenerator = new NewGenerator(this.RowSquareCount * this.ColSquareCount - this.Cfg.unUsedSquareID.Count);
-            this.SquareGenerator.Init(this.Cfg.GetSquareWeight(), this.Cfg.GetSquareColorWeight(), this.Cfg.Seed);
+            this.SquareGenerator.Init(this.Cfg.GetSquareWeight(), this.Cfg.GetSquareColorWeight(), seed);
 
             /// 感觉这个设计不好，有坏代码的味道
             this.SquareNodeID = new List<int>();
@@ -106,6 +107,33 @@ namespace GraphGame.Logic
             //     s += kvp.Value.ToString();
 
             return s;
+        }
+
+        /// <summary>
+        /// 二维下标到线性下标转换
+        /// </summary>
+        internal class ArrayToLinearHelper
+        {
+            private readonly int w;
+            private readonly int h;
+            public ArrayToLinearHelper(int w, int h)
+            {
+                this.w = w;
+                this.h = h;
+            }
+
+            public int GetLinearIndex(int r, int c)
+            {
+                return r * this.w + c;
+            }
+
+            public void GetRowCol(int idx, out int r, out int c)
+            {
+                r = c = -1;
+
+                c = idx % this.w;
+                r = (idx - c) / this.w;
+            }
         }
     }
 }

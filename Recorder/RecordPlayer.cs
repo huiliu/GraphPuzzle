@@ -1,25 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace GraphGame.Logic
 {
-    public class RecordPlayer
+    public abstract class RecordPlayer
     {
-        public RecordPlayer()
-        {
-        }
-
-        private RecordData data = new RecordData();
-        public void Load(string name)
-        {
-            this.data.Load(name);
-        }
-
-        public void Play()
-        {
-
-        }
+        protected RecordData Data;
+        public abstract void Load(string name);
     }
 }

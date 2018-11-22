@@ -10,7 +10,21 @@ namespace GraphGame.Logic
         public Version Version;
         public int LevelID;
         public int Seed;
-        public List<int> Steps = new List<int>();
+        public List<MoveStep> Steps = new List<MoveStep>();
+    }
+
+    public enum StepType
+    {
+        Normal,     // 正常落子
+        Rollback,   // 悔子
+    }
+
+    public struct MoveStep
+    {
+        public string   UID;
+        public StepType Type;
+        public int      Row;
+        public int      Col;
     }
 
     public static class RecordDataHelper

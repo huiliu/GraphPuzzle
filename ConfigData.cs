@@ -12,7 +12,7 @@ namespace GraphGame.Logic
 
     public class LevelData
     {
-        public int Seed;
+        public int ID;
         public int BoardWidth;  // 方块数
         public int BoardHeight; // 方块数
         public List<int> unUsedSquareID = new List<int>();  // 方块ID

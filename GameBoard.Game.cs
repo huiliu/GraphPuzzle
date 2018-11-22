@@ -183,11 +183,18 @@ namespace GraphGame.Logic
             var dlColor = this.CurrentSquare.Nodes[3];
 
             this.AddBlock(uid, r, c, tlColor, trColor, drColor, dlColor);
+            this.Record(uid, r, c);
             this.CalcPathAndScore(r, c);
             this.Next();
 
             this.FireAckEvent();
             this.TryFireGameOverEvent();
+        }
+
+        // 悔棋
+        public void Rollback()
+        {
+
         }
 
         public void Update(float dt)
@@ -242,6 +249,9 @@ namespace GraphGame.Logic
                 this.isGameOver = false;
 
                 OnGameOver.SafeInvoke();
+
+                if (this.Recorder != null)
+                    this.Recorder.Save();
             }
         }
 
@@ -253,5 +263,18 @@ namespace GraphGame.Logic
         }
         #endregion
 
+        private void Record(string uid, int r, int c, StepType type = StepType.Normal)
+        {
+            if (this.Recorder == null)
+                return;
+
+            MoveStep step;
+            step.UID = uid;
+            step.Type = type;
+            step.Row = r;
+            step.Col = c;
+
+            this.Recorder.EqueueStep(step);
+        }
     }
 }

@@ -4,22 +4,28 @@ namespace GraphGame.Logic
 {
     public class Recorder
     {
-        private RecordData data = new RecordData();
+        public RecordData Data { get; private set; }
         public Recorder(Version version, int levelID, int levelSeed)
         {
-            this.data.Version = version;
-            this.data.LevelID = levelID;
-            this.data.Seed = levelSeed;
+            this.Data = new RecordData();
+            this.Data.Version = version;
+            this.Data.LevelID = levelID;
+            this.Data.Seed = levelSeed;
         }
 
-        public void EqueueStep(int i)
+        public void EqueueStep(MoveStep step)
         {
-            this.data.Steps.Add(i);
+            this.Data.Steps.Add(step);
         }
 
-        public void Save(string name)
+        public void Save()
         {
-            this.data.Save(name);
+            this.Data.Save(this.GetArchiveFileName());
+        }
+
+        protected virtual string GetArchiveFileName()
+        {
+            return "Video_" + DateTime.Now.ToString("yyMMhh_HHmmss") + ".xml";
         }
     }
 }
