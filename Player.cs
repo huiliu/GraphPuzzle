@@ -20,8 +20,6 @@ namespace GraphGame.Logic
         public string UID { get; private set; }
         private readonly Dictionary<Color, Graph> Graphs;
 
-        private int BoardWidth;
-        private int BoardHeight;
         private int NodeCount;
         public Player(string uid)
         {
@@ -29,11 +27,9 @@ namespace GraphGame.Logic
             this.Graphs = new Dictionary<Color, Graph>();
         }
 
-        public void Init(int w, int h, HashSet<Color> colors)
+        public void Init(int nodeCount, HashSet<Color> colors)
         {
-            this.BoardWidth = w;
-            this.BoardHeight = h;
-            this.NodeCount = w * h;
+            this.NodeCount = nodeCount;
 
             foreach (var c in colors)
                 this.AddColor(c);
@@ -80,7 +76,6 @@ namespace GraphGame.Logic
             return true;
         }
 
-        private List<Color> NodeColor = new List<Color> { Color.None, Color.None, Color.None, Color.None };
         private readonly Dictionary<int, Color> EdgeColor = new Dictionary<int, Color>(4);
         public IDictionary<int, Color> GetNodeColor(int idx)
         {
@@ -110,19 +105,12 @@ namespace GraphGame.Logic
             return g.GetNodeEdgeCount(idx);
         }
 
-        private Queue<GraphPath> ColorPath = new Queue<GraphPath>();
         public Queue<GraphPath> GetPath()
         {
-            //foreach (var kvp in Graphs)
-            //{
-            //    foreach (var s in kvp.Value.Solutions)
-            //        if (s.Count > 1)    // 由于落点处可能没有颜色kvp.Key的边存在，导致返回一个点的路径
-            //            this.ColorPath.Enqueue(new GraphPath(kvp.Key, s));
-            //}
-
             return this.ColorPath;
         }
 
+        private Queue<GraphPath> ColorPath = new Queue<GraphPath>();
         public Queue<GraphPath> FindGraphPath(int idx)
         {
             this.ColorPath.Clear();
@@ -137,14 +125,6 @@ namespace GraphGame.Logic
             }
 
             return this.ColorPath;
-        }
-
-        private void GetRowCol(int idx, out int r, out int c)
-        {
-            r = c = -1;
-
-            c = idx % this.BoardWidth;
-            r = (idx - c) / this.BoardWidth;
         }
 
         public override string ToString()

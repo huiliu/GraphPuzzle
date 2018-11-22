@@ -34,7 +34,7 @@ namespace GraphGame.Logic
         public void AddPlayer(string uid)
         {
             var p = new Player(uid);
-            p.Init(this.BoardWidth, this.BoardHeight, this.Colors);
+            p.Init(this.BoardWidth * this.BoardHeight, this.Colors);
 
             this.players.Add(uid, p);
             this.PlayerScores.Add(uid, 0);

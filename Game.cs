@@ -77,7 +77,6 @@ namespace GraphGame.Logic
 
         public void Update(float dt)
         {
-            //Console.WriteLine("Game.Update: {0}/{1}", this.RemainTime, dt);
             if (!this.startFlag || this.isGameOver)
                 return;
 

@@ -6,7 +6,8 @@ namespace GraphGame.Logic
     /// </summary>
     public class Array2LinearHelper
     {
-        private int w, h;
+        private readonly int w;
+        private readonly int h;
         public Array2LinearHelper(int w, int h)
         {
             this.w = w;
