@@ -9,26 +9,40 @@ namespace GraphGame.Logic
     {
         public Square CurrentSquare { get; private set; }
         public Square NextSquare { get; private set; }
-        public string CurrentUser { get; private set; }
         public const int kTimeInterval = 30;  // 秒
         public float RemainTime { get; private set; }
         private bool startFlag = false;
-        public void Start(string auid, string buid = "")
+        public void Start(string A, string B="")
         {
             this.startFlag = true;
             this.RemainTime = kTimeInterval;
-            this.AddPlayer(auid);
-            if (!string.IsNullOrEmpty(buid))
-                this.AddPlayer(buid);
-
-            this.CurrentUser = auid;
             this.CurrentSquare = this.SquareGenerator.GetSquare();
             this.NextSquare = this.SquareGenerator.GetSquare();
+
+            this.AddPlayer(A);
+            if (!string.IsNullOrEmpty(B))
+                this.AddPlayer(B);
         }
 
         public void Stop()
         {
             this.startFlag = false;
+        }
+
+        private int CurrentUserIndex;
+        public string CurrentUser
+        {
+            get
+            {
+                var count = this.Players.Count;
+                if (count <= 0)
+                    return null;
+
+                if (this.CurrentUserIndex >= count || this.CurrentUserIndex <= 0)
+                    this.CurrentUserIndex = 0;
+
+                return this.Players[this.CurrentUserIndex].UID;
+            }
         }
 
         #region 查询
@@ -44,9 +58,9 @@ namespace GraphGame.Logic
             foreach (var idx in this.SquareNodeID)
             {
                 bool isEmpty = true;
-                foreach(var kvp in this.players)
+                foreach(var p in this.Players)
                 {
-                    if (!kvp.Value.IsEmpty(idx))
+                    if (!p.IsEmpty(idx))
                     {
                         isEmpty = false;
                         break;
@@ -75,9 +89,9 @@ namespace GraphGame.Logic
 
             var r1 = -1;
             var c1 = -1;
-            foreach (var kvp in this.players)
+            foreach (var p in this.Players)
             {
-                var colors = kvp.Value.GetNodeColor(idx);
+                var colors = p.GetNodeColor(idx);
                 foreach(var ckvp in colors)
                 {
                     this.Array2LinearHelper.GetRowCol(ckvp.Key, out r1, out c1);
@@ -96,10 +110,15 @@ namespace GraphGame.Logic
             return this.GetNodeColor(idx);
         }
 
+        private Queue<Path> PlayerPath;
         public Queue<Path> GetPlayerPath(string uid)
         {
-            var result = new Queue<Path>();
-            var graphPath = this.players[uid].GetPath();
+            this.PlayerPath.Clear();
+            var p = this.GetPlayer(uid);
+            if (p == null)
+                return this.PlayerPath;
+
+            var graphPath = p.GetPath();
             foreach(var gp in graphPath)
             {
                 if (gp.Path.Count <= 1)
@@ -114,21 +133,28 @@ namespace GraphGame.Logic
                     this.Array2LinearHelper.GetRowCol(nid, out point.Row, out point.Col);
                     path.Nodes.Add(point);
                 }
-                result.Enqueue(path);
+                this.PlayerPath.Enqueue(path);
             }
 
-            return result;
+            return this.PlayerPath;
         }
 
         public int GetPlayerEdgeCount(string uid, Color color, int r, int c)
         {
+            var p = this.GetPlayer(uid);
+            if (p == null)
+                return 0;
+
             var idx = this.Array2LinearHelper.GetLinearIndex(r, c);
-            return this.players[uid].GetNodeColorEdgeCount(color, idx);
+            return p.GetNodeColorEdgeCount(color, idx);
         }
 
         public int GetPlayerScore(string uid)
         {
-            return this.PlayerScores[uid];
+            if (!string.IsNullOrEmpty(uid) && this.PlayerScores.ContainsKey(uid))
+                return this.PlayerScores[uid];
+
+            return 0;
         }
         #endregion
 
@@ -138,10 +164,10 @@ namespace GraphGame.Logic
         private void CalcPathAndScore(int r, int c)
         {
             var root = this.Array2LinearHelper.GetLinearIndex(r, c);
-            foreach(var kvp in this.players)
+            foreach(var p in this.Players)
             {
-                var graphPaths = kvp.Value.FindGraphPath(root);
-                this.PlayerScores[kvp.Key] += this.CalcPlayerScore(kvp.Value, graphPaths);
+                var graphPaths = p.FindGraphPath(root);
+                this.PlayerScores[p.UID] += this.CalcPlayerScore(p, graphPaths);
             }
         }
 
@@ -174,8 +200,22 @@ namespace GraphGame.Logic
         #endregion
 
         #region 落子
-        /// 落子
-        public void Ack(string uid, int r, int c)
+
+        private bool CanAck(string uid, int r, int c)
+        {
+            if (string.IsNullOrEmpty(uid))
+                return false;
+
+            if (this.CurrentUser != uid)
+                return false;
+
+            if (this.GetPlayer(uid) == null)
+                return false;
+
+            return true;
+        }
+
+        private void DoAck(string uid, int r, int c)
         {
             var tlColor = this.CurrentSquare.Nodes[0];
             var trColor = this.CurrentSquare.Nodes[1];
@@ -189,6 +229,13 @@ namespace GraphGame.Logic
 
             this.FireAckEvent();
             this.TryFireGameOverEvent();
+        }
+
+        /// 落子
+        public void Ack(string uid, int r, int c)
+        {
+            if (this.CanAck(uid, r, c))
+                this.DoAck(uid, r, c);
         }
 
         // 悔棋
@@ -228,6 +275,7 @@ namespace GraphGame.Logic
             this.RemainTime = kTimeInterval;
             this.isGameOver = false;
 
+            ++this.CurrentUserIndex;
             this.CurrentSquare = this.NextSquare;
             this.NextSquare = this.SquareGenerator.IsEmpty ? null : this.SquareGenerator.GetSquare();
         }
@@ -248,11 +296,21 @@ namespace GraphGame.Logic
                 this.startFlag = false;
                 this.isGameOver = false;
 
-                OnGameOver.SafeInvoke();
-
-                if (this.Recorder != null)
-                    this.Recorder.Save();
+                this.OnGameOver.SafeInvoke();
+                this.TrySaveRecord();
             }
+        }
+
+        private void TrySaveRecord()
+        {
+            if (this.Recorder == null)
+                return;
+
+            this.Recorder.Data.PlayerA = this.Players[0].UID;
+            if (this.Players.Count == 2)
+                this.Recorder.Data.PlayerB = this.Players[1].UID;
+
+            this.Recorder.Save();
         }
 
         // 落子事件

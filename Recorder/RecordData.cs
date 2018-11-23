@@ -10,6 +10,8 @@ namespace GraphGame.Logic
         public Version Version;
         public int LevelID;
         public int Seed;
+        public string PlayerA;
+        public string PlayerB;
         public List<MoveStep> Steps = new List<MoveStep>();
     }
 

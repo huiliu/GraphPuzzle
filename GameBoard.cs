@@ -24,6 +24,7 @@ namespace GraphGame.Logic
             this.ColSquareCount = this.Cfg.BoardHeight;
             this.Colors = this.Cfg.Colors();
             this.PlayerScores = new Dictionary<string, int>();
+            this.Players = new List<Player>();
 
             this.BoardNodeWidth = this.ColSquareCount * 2 + 1;
             this.BoardNodeHeight = this.RowSquareCount * 2 + 1;
@@ -44,50 +45,66 @@ namespace GraphGame.Logic
             }
         }
 
-        private Dictionary<string, Player> players = new Dictionary<string, Player>();
+        private List<Player> Players;
         private void AddPlayer(string uid)
         {
             var p = new Player(uid);
             p.Init(this.BoardNodeWidth * this.BoardNodeHeight, this.Colors);
 
-            this.players.Add(uid, p);
+            this.Players.Add(p);
             this.PlayerScores.Add(uid, 0);
         }
 
         private void RemovePlayer(string uid)
         {
-            this.players.Remove(uid);
+            var p = this.GetPlayer(uid);
+            if (p != null)
+                this.Players.Remove(p);
+
             this.PlayerScores.Remove(uid);
+        }
+
+        private Player GetPlayer(string uid)
+        {
+            return this.Players.Find(p => p.UID == uid);
         }
 
         private void AddColor(Color color)
         {
             this.Colors.Add(color);
-            foreach (var kvp in this.players)
-                kvp.Value.AddColor(color);
+            foreach (var p in this.Players)
+                p.AddColor(color);
         }
 
         private void RemoveColor(Color color)
         {
             this.Colors.Remove(color);
-            foreach (var kvp in this.players)
-                kvp.Value.RemoveColor(color);
+            foreach (var p in this.Players)
+                p.RemoveColor(color);
         }
 
         private void AddEdge(string uid, int r0, int c0, int r1, int c1, Color color)
         {
+            var p = this.GetPlayer(uid);
+            if (p == null)
+                return;
+
             var src = this.Array2LinearHelper.GetLinearIndex(r0, c0);
             var dst = this.Array2LinearHelper.GetLinearIndex(r1, c1);
 
-            this.players[uid].AddEdge(src, dst, color);
+            p.AddEdge(src, dst, color);
         }
 
-        private void RemoveEdge(string uid, int r0, int c0, int r1, int c1, Color color)
+        private void DeleteEdge(string uid, int r0, int c0, int r1, int c1, Color color)
         {
+            var p = this.GetPlayer(uid);
+            if (p == null)
+                return;
+
             var src = this.Array2LinearHelper.GetLinearIndex(r0, c0);
             var dst = this.Array2LinearHelper.GetLinearIndex(r1, c1);
 
-            this.players[uid].DeleteEdge(src, dst, color);
+            p.DeleteEdge(src, dst, color);
         }
 
         private void AddBlock(string uid, int r, int c, Color color1, Color color2, Color color3, Color color4)
